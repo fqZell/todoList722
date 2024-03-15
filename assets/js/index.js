@@ -4,17 +4,17 @@ const note = () => {
     const btnEl = document.querySelector('.button')
     const listsEl = document.querySelector('.lists')
 
-    const notes = [
-        {
-            title: 'Тут будут ваши будущие заметки'
-        }
-    ]
+    let notes = JSON.parse(localStorage.getItem('notes')) || []
 
     function arrayNote() {
+        if(notes.length === 0) {
+            listsEl.innerHTML = 'Добавьте заметку'
+            return
+        }
+
         listsEl.innerHTML = ''
         for(let i = 0; i < notes.length; i++) {
             listsEl.insertAdjacentHTML('afterbegin', getNote(notes[i], i))
-            // console.log(notes);
         }   
     }
 
@@ -31,6 +31,7 @@ const note = () => {
         }
 
         notes.push(newNote)
+        localStorage.setItem('notes', JSON.stringify(notes))
         arrayNote()
 
         inputEl.value = ''
@@ -43,16 +44,34 @@ const note = () => {
         
             <li class="list">
 
-            <p>
-                ${note.title}
-            </p>
+                <p>
+                    ${note.title}
+                </p>
 
-            <button data-type="remove" data-index=${index} class="remove">Удалить</button>
+                <button data-type="remove" data-index=${index} class="remove">Удалить</button>
 
-        </li>
+            </li>
         
         `
     }
+
+    listsEl.addEventListener("click", (event) => {
+
+        if (event.target.dataset.index) {
+            const index = parseInt(event.target.dataset.index)
+            const type = event.target.dataset.type
+            console.log(index);
+            console.log(type);
+
+            if (type === "remove") {
+                notes.splice(index, 1)
+                
+            }
+
+            arrayNote()
+        }
+
+    })
 
 }
 
